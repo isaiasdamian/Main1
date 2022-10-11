@@ -1,0 +1,32 @@
+"""
+f) /deleteOneTransactionBySubscriptor => a partir del identificador de la transacción, eliminelo de la tabla de rental asi como sus descendientes, si aplica....
+"""
+
+from fastapi import FastAPI
+import psycopg2
+
+app = FastAPI()
+
+host = '127.0.0.1'
+port = 5432
+user = 'postgres'
+password = '1234'
+database = 'dvdrental'
+
+app = FastAPI()
+
+@app.get('/deleteOneTransactionBySubscriptor/{payment_id}')
+def deleteOneTransactionBySubscriptor(payment_id:int):
+    conn = psycopg2.connect(host=host,port=port,user=user,password=password,database=database)
+    rows_deleted = 0
+    cursor=conn.cursor()
+    cursor.execute("""DELETE FROM public.payment WHERE rental_id=(SELECT rental_id FROM public.payment WHERE payment.payment_id=17506);")
+    """)
+    rows_deleted = cursor.rowcount
+    conn.commit()
+    conn.close()
+    return rows_deleted
+    if rows_deleted <= 0:
+        return {'message':'No se pudo eliminar el registro'}
+    else: 
+        return {'message':'El registro se elimino correctamente'}
